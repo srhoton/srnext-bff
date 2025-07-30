@@ -1,0 +1,15 @@
+src/
+*.ts
+!*.d.ts
+tsconfig.json
+.eslintrc.js
+.prettierrc
+jest.config.js
+coverage/
+__tests__/
+*.test.js
+*.spec.js
+build.sh
+.gitignore
+.npmignore
+lambda.zip

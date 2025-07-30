@@ -1,0 +1,950 @@
+type Query {
+  hello: HelloResponse!
+  getUnit(id: ID!): Unit
+  listUnits(cursor: String, limit: Int): UnitsConnection!
+  getAccount(id: ID!): Account
+  listAccounts(cursor: String, limit: Int): AccountsConnection!
+  getContact(accountId: ID!, email: String!): Contact
+  listContacts(accountId: ID!, cursor: String, limit: Int): ContactsConnection!
+  getEvent(accountId: ID!, eventId: ID!): Event
+  listEvents(
+    accountId: ID!
+    unitId: String
+    eventCategory: EventCategory
+    status: EventStatus
+    severity: EventSeverity
+    priority: EventPriority
+    sourceSystem: SourceSystem
+    from: String
+    to: String
+    cursor: String
+    limit: Int
+  ): EventsConnection!
+  listEventsByStatus(
+    accountId: ID!
+    status: [EventStatus!]
+    cursor: String
+    limit: Int
+  ): EventsByStatusConnection!
+  getLaborLine(accountId: ID!, laborLineId: ID!): LaborLine
+  listLaborLines(
+    accountId: ID!
+    taskId: String
+    cursor: String
+    limit: Int
+  ): LaborLineConnection!
+  getLocation(accountId: ID!, locationId: ID!): Location
+  listLocations(
+    accountId: ID!
+    cursor: String
+    limit: Int
+  ): LocationConnection!
+  getPart(accountId: ID!, partId: ID!): Part
+  listParts(
+    accountId: ID!
+    locationId: String
+    unitId: String
+    cursor: String
+    limit: Int
+  ): PartConnection!
+  getTask(accountId: ID!, taskId: ID!): Task
+  listTasks(
+    accountId: ID!
+    cursor: String
+    limit: Int
+  ): TaskConnection!
+  getWorkOrder(accountId: ID!, workOrderId: ID!): WorkOrder
+  listWorkOrders(
+    accountId: ID!
+    cursor: String
+    pageSize: Int
+  ): WorkOrderConnection!
+}
+
+type Mutation {
+  createUnit(input: CreateUnitInput!): Unit!
+  updateUnit(id: ID!, input: UpdateUnitInput!): Unit!
+  deleteUnit(id: ID!): DeleteUnitResponse!
+  createAccount(input: CreateAccountInput!): Account!
+  updateAccount(id: ID!, input: UpdateAccountInput!): Account!
+  deleteAccount(id: ID!): DeleteAccountResponse!
+  createContact(accountId: ID!, input: CreateContactInput!): Contact!
+  updateContact(accountId: ID!, email: String!, input: UpdateContactInput!): Contact!
+  deleteContact(accountId: ID!, email: String!): Contact!
+  createEvent(input: CreateEventInput!): Event!
+  updateEvent(accountId: ID!, eventId: ID!, input: UpdateEventInput!): Event!
+  deleteEvent(accountId: ID!, eventId: ID!): DeleteEventResponse!
+  createLaborLine(accountId: ID!, input: CreateLaborLineInput!): LaborLine!
+  updateLaborLine(accountId: ID!, laborLineId: ID!, input: UpdateLaborLineInput!): LaborLine!
+  deleteLaborLine(accountId: ID!, laborLineId: ID!): DeleteLaborLineResponse!
+  createLocation(accountId: ID!, input: CreateLocationInput!): Location!
+  updateLocation(accountId: ID!, locationId: ID!, input: UpdateLocationInput!): Location!
+  deleteLocation(accountId: ID!, locationId: ID!): Boolean!
+  createPart(accountId: ID!, input: CreatePartInput!): Part!
+  updatePart(accountId: ID!, partId: ID!, input: UpdatePartInput!): Part!
+  deletePart(accountId: ID!, partId: ID!): Boolean!
+  createTask(accountId: ID!, input: CreateTaskInput!): Task!
+  updateTask(accountId: ID!, taskId: ID!, input: UpdateTaskInput!): Task!
+  deleteTask(accountId: ID!, taskId: ID!): Boolean!
+  createWorkOrder(accountId: ID!, input: CreateWorkOrderInput!): WorkOrder!
+  updateWorkOrder(accountId: ID!, workOrderId: ID!, input: UpdateWorkOrderInput!): WorkOrder!
+  deleteWorkOrder(accountId: ID!, workOrderId: ID!): Boolean!
+}
+
+type HelloResponse {
+  message: String!
+}
+
+type Unit {
+  id: ID!
+  accountId: String!
+  locationId: String!
+  unitType: String
+  suggestedVin: String!
+  errorCode: String
+  possibleValues: String
+  additionalErrorText: String
+  errorText: String
+  vehicleDescriptor: String
+  destinationMarket: String
+  make: String
+  manufacturerName: String
+  model: String
+  modelYear: String
+  plantCity: String
+  series: String
+  trim: String
+  vehicleType: String
+  plantCountry: String
+  plantCompanyName: String
+  plantState: String
+  trim2: String
+  series2: String
+  note: String
+  basePrice: String
+  nonLandUse: String
+  bodyClass: String
+  doors: String
+  windows: String
+  wheelBaseType: String
+  trackWidthInches: String
+  grossVehicleWeightRatingFrom: String
+  bedLengthInches: String
+  curbWeightPounds: String
+  wheelBaseInchesFrom: String
+  wheelBaseInchesTo: String
+  grossCombinationWeightRatingFrom: String
+  grossCombinationWeightRatingTo: String
+  grossVehicleWeightRatingTo: String
+  bedType: String
+  cabType: String
+  trailerTypeConnection: String
+  trailerBodyType: String
+  trailerLengthFeet: String
+  otherTrailerInfo: String
+  numberOfWheels: String
+  wheelSizeFrontInches: String
+  wheelSizeRearInches: String
+  engineNumberOfCylinders: String
+  displacementCc: String
+  displacementCi: String
+  displacementL: String
+  fuelTypePrimary: String
+  engineBrakeHpFrom: String
+  engineBrakeHpTo: String
+  seatBeltType: String
+  otherRestraintSystemInfo: String
+  frontAirBagLocations: String
+  busType: String
+  busFloorConfigurationType: String
+  motorcycleChassisType: String
+  motorcycleSuspensionType: String
+  customMotorcycleType: String
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp!
+  deletedAt: AWSTimestamp!
+  extendedAttributes: [ExtendedAttribute!]
+  acesAttributes: [AcesAttribute!]
+}
+
+type ExtendedAttribute {
+  attributeName: String!
+  attributeValue: String!
+}
+
+type AcesAttribute {
+  attributeName: String!
+  attributeValue: String!
+  attributeKey: String!
+}
+
+type UnitsConnection {
+  items: [Unit!]!
+  cursor: String
+  hasMore: Boolean
+}
+
+type DeleteUnitResponse {
+  success: Boolean!
+  id: ID!
+  message: String
+}
+
+type Account {
+  id: ID!
+  name: String!
+  status: AccountStatus!
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp!
+  billingContactId: String
+  billingLocationId: String
+  extendedAttributes: [ExtendedAttribute!]
+}
+
+enum AccountStatus {
+  active
+  suspended
+  pending
+}
+
+type AccountsConnection {
+  items: [Account!]!
+  nextCursor: String
+  hasMore: Boolean!
+}
+
+type DeleteAccountResponse {
+  success: Boolean!
+  id: ID!
+  message: String
+}
+
+input CreateUnitInput {
+  locationId: String!
+  suggestedVin: String!
+  unitType: String
+  errorCode: String
+  possibleValues: String
+  additionalErrorText: String
+  errorText: String
+  vehicleDescriptor: String
+  destinationMarket: String
+  make: String
+  manufacturerName: String
+  model: String
+  modelYear: String
+  plantCity: String
+  series: String
+  trim: String
+  vehicleType: String
+  plantCountry: String
+  plantCompanyName: String
+  plantState: String
+  trim2: String
+  series2: String
+  note: String
+  basePrice: String
+  nonLandUse: String
+  bodyClass: String
+  doors: String
+  windows: String
+  wheelBaseType: String
+  trackWidthInches: String
+  grossVehicleWeightRatingFrom: String
+  bedLengthInches: String
+  curbWeightPounds: String
+  wheelBaseInchesFrom: String
+  wheelBaseInchesTo: String
+  grossCombinationWeightRatingFrom: String
+  grossCombinationWeightRatingTo: String
+  grossVehicleWeightRatingTo: String
+  bedType: String
+  cabType: String
+  trailerTypeConnection: String
+  trailerBodyType: String
+  trailerLengthFeet: String
+  otherTrailerInfo: String
+  numberOfWheels: String
+  wheelSizeFrontInches: String
+  wheelSizeRearInches: String
+  engineNumberOfCylinders: String
+  displacementCc: String
+  displacementCi: String
+  displacementL: String
+  fuelTypePrimary: String
+  engineBrakeHpFrom: String
+  engineBrakeHpTo: String
+  seatBeltType: String
+  otherRestraintSystemInfo: String
+  frontAirBagLocations: String
+  busType: String
+  busFloorConfigurationType: String
+  motorcycleChassisType: String
+  motorcycleSuspensionType: String
+  customMotorcycleType: String
+  extendedAttributes: [ExtendedAttributeInput!]
+  acesAttributes: [AcesAttributeInput!]
+}
+
+input UpdateUnitInput {
+  locationId: String
+  suggestedVin: String
+  unitType: String
+  errorCode: String
+  possibleValues: String
+  additionalErrorText: String
+  errorText: String
+  vehicleDescriptor: String
+  destinationMarket: String
+  make: String
+  manufacturerName: String
+  model: String
+  modelYear: String
+  plantCity: String
+  series: String
+  trim: String
+  vehicleType: String
+  plantCountry: String
+  plantCompanyName: String
+  plantState: String
+  trim2: String
+  series2: String
+  note: String
+  basePrice: String
+  nonLandUse: String
+  bodyClass: String
+  doors: String
+  windows: String
+  wheelBaseType: String
+  trackWidthInches: String
+  grossVehicleWeightRatingFrom: String
+  bedLengthInches: String
+  curbWeightPounds: String
+  wheelBaseInchesFrom: String
+  wheelBaseInchesTo: String
+  grossCombinationWeightRatingFrom: String
+  grossCombinationWeightRatingTo: String
+  grossVehicleWeightRatingTo: String
+  bedType: String
+  cabType: String
+  trailerTypeConnection: String
+  trailerBodyType: String
+  trailerLengthFeet: String
+  otherTrailerInfo: String
+  numberOfWheels: String
+  wheelSizeFrontInches: String
+  wheelSizeRearInches: String
+  engineNumberOfCylinders: String
+  displacementCc: String
+  displacementCi: String
+  displacementL: String
+  fuelTypePrimary: String
+  engineBrakeHpFrom: String
+  engineBrakeHpTo: String
+  seatBeltType: String
+  otherRestraintSystemInfo: String
+  frontAirBagLocations: String
+  busType: String
+  busFloorConfigurationType: String
+  motorcycleChassisType: String
+  motorcycleSuspensionType: String
+  customMotorcycleType: String
+  extendedAttributes: [ExtendedAttributeInput!]
+  acesAttributes: [AcesAttributeInput!]
+}
+
+input ExtendedAttributeInput {
+  attributeName: String!
+  attributeValue: String!
+}
+
+input AcesAttributeInput {
+  attributeName: String!
+  attributeValue: String!
+  attributeKey: String!
+}
+
+input CreateAccountInput {
+  id: ID
+  name: String!
+  status: AccountStatus!
+  billingContactId: String
+  billingLocationId: String
+  extendedAttributes: [ExtendedAttributeInput!]
+}
+
+input UpdateAccountInput {
+  name: String
+  status: AccountStatus
+  billingContactId: String
+  billingLocationId: String
+  extendedAttributes: [ExtendedAttributeInput!]
+}
+
+type Contact {
+  accountId: ID!
+  contactId: ID!
+  email: String!
+  firstName: String
+  lastName: String
+  phone: String
+  status: ContactStatus
+  locationIds: [String!]
+  config: AWSJSON
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp!
+  deletedAt: AWSTimestamp
+}
+
+enum ContactStatus {
+  active
+  inactive
+}
+
+type ContactsConnection {
+  items: [Contact!]!
+  nextCursor: String
+  limit: Int!
+}
+
+
+input CreateContactInput {
+  email: String!
+  firstName: String
+  lastName: String
+  phone: String
+  status: ContactStatus
+  locationIds: [String!]
+  config: AWSJSON
+}
+
+input UpdateContactInput {
+  firstName: String
+  lastName: String
+  phone: String
+  status: ContactStatus
+  locationIds: [String!]
+  config: AWSJSON
+}
+
+type Event {
+  accountId: ID!
+  eventId: ID!
+  unitId: String!
+  eventType: String!
+  eventCategory: EventCategory!
+  severity: EventSeverity
+  priority: EventPriority
+  description: String
+  summary: String
+  sourceSystem: SourceSystem
+  maintenanceDetails: MaintenanceDetails
+  status: EventStatus!
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp
+  acknowledgedAt: AWSTimestamp
+  deletedAt: AWSTimestamp
+  extendedAttributes: AWSJSON
+}
+
+enum EventCategory {
+  maintenance
+  fault
+  certification
+  error_report
+  inspection
+  accident
+  violation
+  fuel
+  driver_report
+  other
+}
+
+enum EventSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+enum EventPriority {
+  low
+  medium
+  high
+  critical
+}
+
+enum EventStatus {
+  created
+  acknowledged
+  in_progress
+  resolved
+  closed
+  cancelled
+  on_hold
+  escalated
+}
+
+enum SourceSystem {
+  telematics
+  driver_app
+  maintenance_system
+  inspection_app
+  manual_entry
+  eld
+  diagnostic_tool
+  external_api
+  other
+}
+
+type MaintenanceDetails {
+  actionType: String
+  description: String
+  cost: Float
+  partNumbers: [String!]
+  laborHours: Float
+  scheduledAt: String
+  completedAt: String
+  nextDueAt: String
+  components: [MaintenanceComponent!]
+}
+
+type MaintenanceComponent {
+  name: String!
+  action: String!
+  notes: String
+}
+
+type EventsConnection {
+  items: [Event!]!
+  nextCursor: String
+  limit: Int!
+  count: Int!
+}
+
+type EventWithUnitInfo {
+  accountId: ID!
+  eventId: ID!
+  unitId: String!
+  eventType: String!
+  eventCategory: EventCategory!
+  severity: EventSeverity
+  priority: EventPriority
+  description: String
+  summary: String
+  sourceSystem: SourceSystem
+  maintenanceDetails: MaintenanceDetails
+  status: EventStatus!
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp
+  acknowledgedAt: AWSTimestamp
+  deletedAt: AWSTimestamp
+  extendedAttributes: AWSJSON
+  unitInfo: UnitInfo!
+}
+
+type UnitInfo {
+  model: String
+  modelYear: String
+  suggestedVin: String!
+}
+
+type EventsByStatusConnection {
+  items: [EventWithUnitInfo!]!
+  nextCursor: String
+  limit: Int!
+  count: Int!
+}
+
+type DeleteEventResponse {
+  success: Boolean!
+  accountId: ID!
+  eventId: ID!
+  message: String
+}
+
+input CreateEventInput {
+  accountId: ID!
+  unitId: String!
+  eventType: String!
+  eventCategory: EventCategory!
+  severity: EventSeverity
+  priority: EventPriority
+  description: String
+  summary: String
+  sourceSystem: SourceSystem
+  maintenanceDetails: MaintenanceDetailsInput
+  extendedAttributes: AWSJSON
+}
+
+input UpdateEventInput {
+  eventType: String
+  eventCategory: EventCategory
+  severity: EventSeverity
+  priority: EventPriority
+  description: String
+  summary: String
+  sourceSystem: SourceSystem
+  maintenanceDetails: MaintenanceDetailsInput
+  status: EventStatus
+  extendedAttributes: AWSJSON
+}
+
+input MaintenanceDetailsInput {
+  actionType: String
+  description: String
+  cost: Float
+  partNumbers: [String!]
+  laborHours: Float
+  scheduledAt: String
+  completedAt: String
+  nextDueAt: String
+  components: [MaintenanceComponentInput!]
+}
+
+input MaintenanceComponentInput {
+  name: String!
+  action: String!
+  notes: String
+}
+
+type LaborLine {
+  laborLineId: ID!
+  accountId: ID!
+  taskId: String!
+  partId: [String!]
+  notes: [String!]
+  description: String
+}
+
+type LaborLineConnection {
+  items: [LaborLine!]!
+  nextCursor: String
+  hasMore: Boolean!
+}
+
+type DeleteLaborLineResponse {
+  success: Boolean!
+  accountId: ID!
+  laborLineId: ID!
+  message: String
+}
+
+input CreateLaborLineInput {
+  laborLineId: ID
+  taskId: String!
+  partId: [String!]
+  notes: [String!]
+  description: String
+}
+
+input UpdateLaborLineInput {
+  taskId: String
+  partId: [String!]
+  notes: [String!]
+  description: String
+}
+
+# Location types with union support for address/coordinates
+union Location = AddressLocation | CoordinatesLocation
+
+type AddressLocation {
+  id: ID
+  accountId: ID!
+  locationType: String! # Always "address"
+  address: Address!
+  extendedAttributes: AWSJSON
+  createdAt: AWSTimestamp
+  updatedAt: AWSTimestamp
+  deletedAt: AWSTimestamp
+}
+
+type CoordinatesLocation {
+  id: ID
+  accountId: ID!
+  locationType: String! # Always "coordinates"
+  coordinates: Coordinates!
+  extendedAttributes: AWSJSON
+  createdAt: AWSTimestamp
+  updatedAt: AWSTimestamp
+  deletedAt: AWSTimestamp
+}
+
+type Address {
+  streetAddress: String!
+  streetAddress2: String
+  city: String!
+  stateProvince: String
+  postalCode: String!
+  country: String!
+}
+
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+  altitude: Float
+  accuracy: Float
+}
+
+type LocationConnection {
+  items: [Location!]!
+  nextCursor: String
+  limit: Int!
+  count: Int!
+}
+
+input CreateLocationInput {
+  accountId: ID!
+  locationType: String!
+  address: AddressInput
+  coordinates: CoordinatesInput
+  extendedAttributes: AWSJSON
+}
+
+input UpdateLocationInput {
+  accountId: ID
+  locationType: String
+  address: AddressInput
+  coordinates: CoordinatesInput
+  extendedAttributes: AWSJSON
+}
+
+input AddressInput {
+  streetAddress: String!
+  streetAddress2: String
+  city: String!
+  stateProvince: String
+  postalCode: String!
+  country: String!
+}
+
+input CoordinatesInput {
+  latitude: Float!
+  longitude: Float!
+  altitude: Float
+  accuracy: Float
+}
+
+# Part Types
+type Part {
+  accountId: ID!
+  sortKey: String!
+  partId: ID!
+  partNumber: String!
+  description: String!
+  manufacturer: String!
+  category: String!
+  subcategory: String
+  unitId: String
+  locationId: String
+  condition: PartCondition!
+  status: PartStatus!
+  quantity: Int!
+  serialNumber: String
+  batchNumber: String
+  installDate: AWSTimestamp
+  purchaseDate: AWSTimestamp
+  warrantyExpiration: AWSTimestamp
+  vendor: String
+  weight: Float
+  dimensions: Dimensions
+  specifications: AWSJSON
+  extendedAttributes: AWSJSON
+  tags: [String!]
+  notes: String
+  createdAt: AWSTimestamp
+  updatedAt: AWSTimestamp
+  deletedAt: AWSTimestamp
+}
+
+enum PartCondition {
+  new
+  used
+  refurbished
+  damaged
+  unknown
+}
+
+enum PartStatus {
+  available
+  installed
+  reserved
+  maintenance
+  disposed
+}
+
+type Dimensions {
+  length: Float
+  width: Float
+  height: Float
+}
+
+type PartConnection {
+  items: [Part!]!
+  nextCursor: String
+  limit: Int!
+  count: Int!
+}
+
+input CreatePartInput {
+  partNumber: String!
+  description: String!
+  manufacturer: String!
+  category: String!
+  subcategory: String
+  unitId: String
+  locationId: String
+  condition: PartCondition!
+  status: PartStatus!
+  quantity: Int!
+  serialNumber: String
+  batchNumber: String
+  installDate: AWSTimestamp
+  purchaseDate: AWSTimestamp
+  warrantyExpiration: AWSTimestamp
+  vendor: String
+  weight: Float
+  dimensions: DimensionsInput
+  specifications: AWSJSON
+  extendedAttributes: AWSJSON
+  tags: [String!]
+  notes: String
+}
+
+input UpdatePartInput {
+  partNumber: String
+  description: String
+  manufacturer: String
+  category: String
+  subcategory: String
+  unitId: String
+  locationId: String
+  condition: PartCondition
+  status: PartStatus
+  quantity: Int
+  serialNumber: String
+  batchNumber: String
+  installDate: AWSTimestamp
+  purchaseDate: AWSTimestamp
+  warrantyExpiration: AWSTimestamp
+  vendor: String
+  weight: Float
+  dimensions: DimensionsInput
+  specifications: AWSJSON
+  extendedAttributes: AWSJSON
+  tags: [String!]
+  notes: String
+}
+
+input DimensionsInput {
+  length: Float
+  width: Float
+  height: Float
+}
+
+type Task {
+  taskId: ID!
+  accountId: ID!
+  workOrderId: ID!
+  contactId: ID!
+  locationId: ID!
+  laborlinesId: [ID!]!
+  description: String!
+  notes: [String!]!
+  status: TaskStatus!
+  estimateHours: Float
+  actualHours: Float
+  startDate: AWSTimestamp
+  endDate: AWSTimestamp
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp!
+  deletedAt: AWSTimestamp
+}
+
+enum TaskStatus {
+  pending
+  inProgress
+  completed
+}
+
+type TaskConnection {
+  items: [Task!]!
+  nextCursor: String
+  limit: Int!
+  count: Int!
+}
+
+input CreateTaskInput {
+  workOrderId: ID!
+  contactId: ID!
+  locationId: ID!
+  laborlinesId: [ID!]
+  description: String
+  notes: [String!]
+  status: TaskStatus
+  estimateHours: Float
+  actualHours: Float
+  startDate: AWSTimestamp
+  endDate: AWSTimestamp
+}
+
+input UpdateTaskInput {
+  contactId: ID
+  locationId: ID
+  laborlinesId: [ID!]
+  description: String
+  notes: [String!]
+  status: TaskStatus
+  estimateHours: Float
+  actualHours: Float
+  startDate: AWSTimestamp
+  endDate: AWSTimestamp
+}
+
+type WorkOrder {
+  workOrderId: ID!
+  accountId: ID!
+  contactId: ID!
+  unitId: ID!
+  status: WorkOrderStatus!
+  description: String!
+  notes: [String!]!
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp!
+  deletedAt: AWSTimestamp
+}
+
+enum WorkOrderStatus {
+  draft
+  pending
+  inProgress
+  completed
+}
+
+type WorkOrderConnection {
+  items: [WorkOrder!]!
+  nextCursor: String
+  pageSize: Int!
+  count: Int!
+}
+
+input CreateWorkOrderInput {
+  contactId: ID!
+  unitId: ID!
+  status: WorkOrderStatus!
+  description: String!
+  notes: [String!]
+}
+
+input UpdateWorkOrderInput {
+  contactId: ID
+  unitId: ID
+  status: WorkOrderStatus
+  description: String
+  notes: [String!]
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
