@@ -1,0 +1,19 @@
+# Session Prompts - ListEventsByStatus Implementation
+
+## Initial Request
+"ok, now we need to modify the event lambda. We need to allow a new query that is 'ListEventsByStatus'. The way this needs to work is the following:
+1. It queryies the units endpoint (unit-srnext.sb.fullbay.com) and get all the units for an account.
+2. Next, query the events endpoint (event-srnext.sb.fullbay.com) and get all the events for that unit.
+3. Then, sort the events by status.
+4. Finally, return an AppSync object that is event item list that is sorted by status, and has the unit info you found for the unit *inside* the individual event structure (so there is a unitInfo clause nested in each event that has this data). The ordering of the events list should be by status across all units (so, all the 'created' statuses come first, the all the 'inProgress' ones, and so on).
+
+Ultrathink this, and let me know what questions you have."
+
+## Follow-up with requirements
+"For 1, alphabetical order. For 2, let's start with model, modelYear, suggestedVin. For 3, Lets do cursor based list listEvents. For 4, no, no limits for right now. For 5, filter on status values."
+
+## Final Request
+"Can you show me the call and result for accountId 38c14370-a081-70c1-80e7-900c418472e5?"
+
+## Commit Request
+"ok. Please commit your work, add prompts in this session to the commit via git notes, push it, and using your github mcp integration, create a PR."
