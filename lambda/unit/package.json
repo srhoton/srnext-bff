@@ -1,0 +1,45 @@
+{
+  "name": "@srnext-bff/unit-lambda",
+  "version": "1.0.0",
+  "description": "AppSync resolver Lambda for units service",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run clean",
+    "prepare": "npm run build"
+  },
+  "keywords": ["appsync", "lambda", "units", "typescript"],
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@aws-sdk/client-appsync": "3.100.0",
+    "axios": "1.7.3"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.143",
+    "@types/jest": "29.5.12",
+    "@types/node": "20.14.11",
+    "@typescript-eslint/eslint-plugin": "7.17.0",
+    "@typescript-eslint/parser": "7.17.0",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-import": "2.29.1",
+    "eslint-plugin-prettier": "5.2.1",
+    "eslint-plugin-promise": "6.5.1",
+    "eslint-plugin-security": "3.0.1",
+    "eslint-plugin-sonarjs": "1.0.4",
+    "jest": "29.7.0",
+    "prettier": "3.3.3",
+    "ts-jest": "29.2.3",
+    "typescript": "5.5.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
