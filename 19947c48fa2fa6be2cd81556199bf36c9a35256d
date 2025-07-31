@@ -1,0 +1,18 @@
+Session prompts:
+
+1. Initial request:
+'Ok. A new endpoint has been built into the units resolver that gets units with work orders in it. The code is deployed, but not working. Could you:
+1. Review the code with the typescript rules in your memory, and adjust the code as needed. Make sure the code lints and formats properly.
+2. Review the appsync configuration in the terraform directory and make sure it follows all the terraform rules in your memory.
+3. Deploy and changes and test the deployment.'
+
+2. Tasks completed:
+- Fixed TypeScript compliance issues by removing any types and fixing strict boolean checks
+- Fixed linting errors by removing unnecessary async/await and proper type assertions
+- Created .eslintignore file to exclude dist and test files
+- Reviewed Terraform configuration (which was already correct)
+- Fixed authorization token extraction bug (was adding Bearer prefix twice)
+- Successfully deployed and tested the getUnitWithWorkOrders endpoint
+
+3. Final request:
+'ok. Please commit your work, add prompts in this session to the commit via git notes, push it, and using your github mcp integration, create a PR.'
