@@ -173,8 +173,8 @@ export interface UpdateUnitInput extends Partial<Unit> {
 /**
  * API Response types
  */
-export interface PaginatedResponse {
-  items: Unit[];
+export interface PaginatedResponse<T = Unit> {
+  items: T[];
   cursor?: string;
   hasMore?: boolean;
 }
@@ -213,4 +213,29 @@ export interface UpdateUnitParams {
 export interface DeleteUnitParams {
   accountId: string;
   id: string;
+}
+
+/**
+ * WorkOrder types (subset needed for units with work orders)
+ */
+export type WorkOrderStatus = 'draft' | 'pending' | 'inProgress' | 'completed';
+
+export interface WorkOrder {
+  workOrderId: string;
+  accountId: string;
+  contactId: string;
+  unitId: string;
+  status: WorkOrderStatus;
+  description: string;
+  notes: string[];
+  createdAt: number;
+  updatedAt: number;
+  deletedAt?: number | null;
+}
+
+/**
+ * Unit with associated work orders
+ */
+export interface UnitWithWorkOrders extends Unit {
+  workOrders: WorkOrder[];
 }

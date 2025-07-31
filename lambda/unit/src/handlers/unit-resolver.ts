@@ -5,8 +5,10 @@ import {
   CreateUnitArguments,
   UpdateUnitArguments,
   DeleteUnitArguments,
+  GetUnitWithWorkOrdersArguments,
   UnauthorizedError,
   ValidationError,
+  ListUnitsParams,
 } from "../types";
 import { UnitsApiService } from "../services/units-api.service";
 import { CreateUnitInput, UpdateUnitInput } from "../types";
@@ -17,10 +19,11 @@ export class UnitResolver {
    */
   private static extractAuthToken<T>(event: AppSyncResolverEvent<T>): string {
     const authHeader = event.request.headers.authorization;
-    if (!authHeader) {
+    if (authHeader === undefined || authHeader === null || authHeader === "") {
       throw new UnauthorizedError("Authorization header is missing");
     }
-    return authHeader;
+    // Extract just the token part, removing "Bearer " prefix
+    return authHeader.replace(/^Bearer\s+/i, "");
   }
 
   /**
@@ -37,7 +40,7 @@ export class UnitResolver {
   /**
    * Handle getUnit query
    */
-  static async getUnit(event: AppSyncResolverEvent<GetUnitArguments>): Promise<unknown> {
+  static getUnit(event: AppSyncResolverEvent<GetUnitArguments>): Promise<unknown> {
     const authToken = this.extractAuthToken(event);
     const accountId = this.extractAccountId(event);
     const { id } = event.arguments;
@@ -53,17 +56,17 @@ export class UnitResolver {
   /**
    * Handle listUnits query
    */
-  static async listUnits(event: AppSyncResolverEvent<ListUnitsArguments>): Promise<unknown> {
+  static listUnits(event: AppSyncResolverEvent<ListUnitsArguments>): Promise<unknown> {
     const authToken = this.extractAuthToken(event);
     const accountId = this.extractAccountId(event);
     const { cursor, limit } = event.arguments;
 
     const service = new UnitsApiService(authToken);
-    const params: any = {
+    const params: ListUnitsParams = {
       accountId,
       limit: limit ?? 20,
     };
-    if (cursor) {
+    if (cursor !== undefined && cursor !== null && cursor !== "") {
       params.cursor = cursor;
     }
     return service.listUnits(params);
@@ -72,12 +75,12 @@ export class UnitResolver {
   /**
    * Handle createUnit mutation
    */
-  static async createUnit(event: AppSyncResolverEvent<CreateUnitArguments>): Promise<unknown> {
+  static createUnit(event: AppSyncResolverEvent<CreateUnitArguments>): Promise<unknown> {
     const authToken = this.extractAuthToken(event);
     const accountId = this.extractAccountId(event);
     const { input } = event.arguments;
 
-    if (!input) {
+    if (input === undefined || input === null) {
       throw new ValidationError("Input is required");
     }
 
@@ -108,7 +111,7 @@ export class UnitResolver {
   /**
    * Handle updateUnit mutation
    */
-  static async updateUnit(event: AppSyncResolverEvent<UpdateUnitArguments>): Promise<unknown> {
+  static updateUnit(event: AppSyncResolverEvent<UpdateUnitArguments>): Promise<unknown> {
     const authToken = this.extractAuthToken(event);
     const accountId = this.extractAccountId(event);
     const { id, input } = event.arguments;
@@ -117,7 +120,7 @@ export class UnitResolver {
       throw new ValidationError("Unit ID is required");
     }
 
-    if (!input || Object.keys(input).length === 0) {
+    if (input === undefined || input === null || Object.keys(input).length === 0) {
       throw new ValidationError("At least one field to update is required");
     }
 
@@ -134,6 +137,26 @@ export class UnitResolver {
       id,
       unit: unitUpdate,
     });
+  }
+
+  /**
+   * Handle getUnitWithWorkOrders query
+   */
+  static getUnitWithWorkOrders(event: AppSyncResolverEvent<GetUnitWithWorkOrdersArguments>): Promise<unknown> {
+    const authToken = this.extractAuthToken(event);
+    const accountId = this.extractAccountId(event);
+    const { cursor, limit } = event.arguments;
+
+    const service = new UnitsApiService(authToken);
+    const params: ListUnitsParams = {
+      accountId,
+      limit: limit ?? 20,
+    };
+    if (cursor !== undefined && cursor !== null && cursor !== "") {
+      params.cursor = cursor;
+    }
+    
+    return service.getUnitsWithWorkOrders(params);
   }
 
   /**

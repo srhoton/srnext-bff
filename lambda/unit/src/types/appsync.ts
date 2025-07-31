@@ -98,6 +98,11 @@ export interface DeleteUnitArguments {
   id: string;
 }
 
+export interface GetUnitWithWorkOrdersArguments {
+  cursor?: string;
+  limit?: number;
+}
+
 /**
  * Error types
  */

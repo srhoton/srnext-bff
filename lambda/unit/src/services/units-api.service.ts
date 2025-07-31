@@ -9,6 +9,8 @@ import {
   CreateUnitParams,
   UpdateUnitParams,
   DeleteUnitParams,
+  WorkOrder,
+  UnitWithWorkOrders,
 } from "../types";
 import { ServiceError } from "../types/appsync";
 
@@ -45,7 +47,7 @@ export class UnitsApiService {
       );
       return response.data;
     } catch (error) {
-      throw this.handleApiError(error as AxiosError);
+      throw this.handleApiError(error as AxiosError<ErrorResponse>);
     }
   }
 
@@ -59,7 +61,7 @@ export class UnitsApiService {
       );
       return response.data;
     } catch (error) {
-      throw this.handleApiError(error as AxiosError);
+      throw this.handleApiError(error as AxiosError<ErrorResponse>);
     }
   }
 
@@ -74,7 +76,7 @@ export class UnitsApiService {
       );
       return response.data;
     } catch (error) {
-      throw this.handleApiError(error as AxiosError);
+      throw this.handleApiError(error as AxiosError<ErrorResponse>);
     }
   }
 
@@ -89,7 +91,7 @@ export class UnitsApiService {
       );
       return response.data;
     } catch (error) {
-      throw this.handleApiError(error as AxiosError);
+      throw this.handleApiError(error as AxiosError<ErrorResponse>);
     }
   }
 
@@ -100,16 +102,76 @@ export class UnitsApiService {
     try {
       await this.client.delete(`/units/${params.accountId}/${params.id}`);
     } catch (error) {
-      throw this.handleApiError(error as AxiosError);
+      throw this.handleApiError(error as AxiosError<ErrorResponse>);
     }
   }
 
   /**
-   * Handle API errors and convert them to appropriate error types
+   * Get units with their associated work orders
    */
-  private handleApiError(error: AxiosError): Error {
+  async getUnitsWithWorkOrders(params: ListUnitsParams): Promise<PaginatedResponse<UnitWithWorkOrders>> {
+    try {
+      // First, get all units
+      const unitsResponse = await this.listUnits(params);
+      
+      // Create workorder service client with same auth as units service
+      const workOrderClient = axios.create({
+        baseURL: process.env["WORKORDERS_API_URL"] ?? "https://workorder-srnext.sb.fullbay.com",
+        headers: this.client.defaults.headers,
+        timeout: 30000,
+      });
+
+      // For each unit, fetch its work orders
+      const unitsWithWorkOrders: UnitWithWorkOrders[] = await Promise.all(
+        unitsResponse.items.map(async (unit): Promise<UnitWithWorkOrders> => {
+          try {
+            const workOrdersResponse = await workOrderClient.get<{ items: WorkOrder[] }>(
+              `/accounts/${params.accountId}/work-orders`,
+              {
+                params: {
+                  unitId: unit.id,
+                },
+              },
+            );
+            
+            // Get work orders for this specific unit
+            const unitWorkOrders = workOrdersResponse.data.items;
+
+            return {
+              ...unit,
+              workOrders: unitWorkOrders,
+            };
+          } catch (error) {
+            // If work order fetching fails, return unit with empty work orders array
+            console.error(`Failed to fetch work orders for unit ${unit.id}:`, error);
+            return {
+              ...unit,
+              workOrders: [],
+            };
+          }
+        })
+      );
+
+      const result: PaginatedResponse<UnitWithWorkOrders> = {
+        items: unitsWithWorkOrders,
+      };
+      
+      if (unitsResponse.cursor !== undefined && unitsResponse.cursor !== null && unitsResponse.cursor !== "") {
+        result.cursor = unitsResponse.cursor;
+      }
+      
+      if (unitsResponse.hasMore !== undefined) {
+        result.hasMore = unitsResponse.hasMore;
+      }
+      
+      return result;
+    } catch (error) {
+      throw this.handleApiError(error as AxiosError<ErrorResponse>);
+    }
+  }
+  private handleApiError(error: AxiosError<ErrorResponse>): Error {
     if (error.response) {
-      const data = error.response.data as ErrorResponse;
+      const data = error.response.data;
       const message = data.error ?? "An error occurred";
       const statusCode = error.response.status;
 
