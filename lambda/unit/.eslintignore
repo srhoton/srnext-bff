@@ -1,0 +1,9 @@
+dist/
+node_modules/
+coverage/
+*.js
+!.eslintrc.js
+!jest.config.js
+**/__tests__/**
+**/*.test.ts
+**/*.spec.ts

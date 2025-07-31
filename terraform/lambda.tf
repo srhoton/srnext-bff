@@ -10,8 +10,9 @@ resource "aws_lambda_function" "unit" {
 
   environment {
     variables = {
-      UNITS_API_URL = "https://unit-srnext.sb.fullbay.com"
-      LOG_LEVEL     = "INFO"
+      UNITS_API_URL      = "https://unit-srnext.sb.fullbay.com"
+      WORKORDERS_API_URL = "https://workorder-srnext.sb.fullbay.com"
+      LOG_LEVEL          = "INFO"
     }
   }
 
@@ -187,6 +188,15 @@ resource "aws_appsync_resolver" "delete_unit" {
   api_id            = aws_appsync_graphql_api.main.id
   type              = "Mutation"
   field             = "deleteUnit"
+  data_source       = aws_appsync_datasource.unit_lambda.name
+  request_template  = file("${path.module}/resolvers/lambda-request.vtl")
+  response_template = file("${path.module}/resolvers/lambda-response.vtl")
+}
+
+resource "aws_appsync_resolver" "get_unit_with_work_orders" {
+  api_id            = aws_appsync_graphql_api.main.id
+  type              = "Query"
+  field             = "getUnitWithWorkOrders"
   data_source       = aws_appsync_datasource.unit_lambda.name
   request_template  = file("${path.module}/resolvers/lambda-request.vtl")
   response_template = file("${path.module}/resolvers/lambda-response.vtl")
@@ -1054,16 +1064,16 @@ resource "aws_lambda_function" "task" {
   runtime       = "nodejs18.x"
   timeout       = 30
   memory_size   = 256
-  
+
   environment {
     variables = {
       TASKS_API_URL = "https://srnext-tasks.sb.fullbay.com"
       LOG_LEVEL     = "INFO"
     }
   }
-  
+
   source_code_hash = filebase64sha256("../lambda/task/lambda.zip")
-  
+
   tags = {
     Name        = "${var.project}-${var.environment}-task-lambda"
     Environment = var.environment
@@ -1074,7 +1084,7 @@ resource "aws_lambda_function" "task" {
 # IAM Role for Task Lambda
 resource "aws_iam_role" "task_lambda" {
   name = "${var.project}-${var.environment}-task-lambda-role"
-  
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -1087,7 +1097,7 @@ resource "aws_iam_role" "task_lambda" {
       }
     ]
   })
-  
+
   tags = {
     Name        = "${var.project}-${var.environment}-task-lambda-role"
     Environment = var.environment
@@ -1120,7 +1130,7 @@ resource "aws_iam_role_policy" "task_lambda" {
 resource "aws_cloudwatch_log_group" "task_lambda" {
   name              = "/aws/lambda/${var.project}-${var.environment}-task-resolver"
   retention_in_days = 7
-  
+
   tags = {
     Name        = "${var.project}-${var.environment}-task-lambda-logs"
     Environment = var.environment
@@ -1134,7 +1144,7 @@ resource "aws_appsync_datasource" "task_lambda" {
   name             = "task_lambda_datasource"
   type             = "AWS_LAMBDA"
   service_role_arn = aws_iam_role.appsync_lambda.arn
-  
+
   lambda_config {
     function_arn = aws_lambda_function.task.arn
   }
@@ -1261,7 +1271,7 @@ resource "aws_iam_role_policy" "workorder_lambda" {
 resource "aws_cloudwatch_log_group" "workorder_lambda" {
   name              = "/aws/lambda/${var.project}-${var.environment}-workorder-resolver"
   retention_in_days = 7
-  
+
   tags = {
     Name        = "${var.project}-${var.environment}-workorder-lambda-logs"
     Environment = var.environment
@@ -1275,7 +1285,7 @@ resource "aws_appsync_datasource" "workorder_lambda" {
   name             = "workorder_lambda_datasource"
   type             = "AWS_LAMBDA"
   service_role_arn = aws_iam_role.appsync_lambda.arn
-  
+
   lambda_config {
     function_arn = aws_lambda_function.workorder.arn
   }

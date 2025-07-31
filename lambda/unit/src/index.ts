@@ -1,7 +1,15 @@
 import { Handler } from "aws-lambda";
 
 import { UnitResolver } from "./handlers/unit-resolver";
-import { AppSyncResolverEvent } from "./types";
+import {
+  AppSyncResolverEvent,
+  GetUnitArguments,
+  ListUnitsArguments,
+  CreateUnitArguments,
+  UpdateUnitArguments,
+  DeleteUnitArguments,
+  GetUnitWithWorkOrdersArguments,
+} from "./types";
 
 /**
  * Main Lambda handler for AppSync resolver
@@ -10,26 +18,32 @@ import { AppSyncResolverEvent } from "./types";
 export const handler: Handler<AppSyncResolverEvent, unknown> = async (
   event: AppSyncResolverEvent,
 ): Promise<unknown> => {
-  console.log("Received AppSync event:", JSON.stringify(event, null, 2));
+  // Log event only in development
+  if (process.env["NODE_ENV"] !== "production") {
+    console.warn("Received AppSync event:", JSON.stringify(event, null, 2));
+  }
 
   try {
     const { fieldName } = event.info;
 
     switch (fieldName) {
       case "getUnit":
-        return await UnitResolver.getUnit(event as any);
+        return UnitResolver.getUnit(event as unknown as AppSyncResolverEvent<GetUnitArguments>);
       
       case "listUnits":
-        return await UnitResolver.listUnits(event as any);
+        return UnitResolver.listUnits(event as unknown as AppSyncResolverEvent<ListUnitsArguments>);
       
       case "createUnit":
-        return await UnitResolver.createUnit(event as any);
+        return UnitResolver.createUnit(event as unknown as AppSyncResolverEvent<CreateUnitArguments>);
       
       case "updateUnit":
-        return await UnitResolver.updateUnit(event as any);
+        return UnitResolver.updateUnit(event as unknown as AppSyncResolverEvent<UpdateUnitArguments>);
       
       case "deleteUnit":
-        return await UnitResolver.deleteUnit(event as any);
+        return await UnitResolver.deleteUnit(event as unknown as AppSyncResolverEvent<DeleteUnitArguments>);
+      
+      case "getUnitWithWorkOrders":
+        return UnitResolver.getUnitWithWorkOrders(event as unknown as AppSyncResolverEvent<GetUnitWithWorkOrdersArguments>);
       
       default:
         throw new Error(`Unknown field: ${fieldName}`);

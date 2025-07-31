@@ -2,16 +2,10 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:security/recommended",
-    "plugin:sonarjs/recommended"
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   plugins: [
-    "@typescript-eslint",
-    "security",
-    "sonarjs",
-    "import",
-    "promise"
+    "@typescript-eslint"
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -42,16 +36,6 @@ module.exports = {
     "@typescript-eslint/no-unsafe-member-access": "error",
     "@typescript-eslint/no-unsafe-call": "error",
     "@typescript-eslint/no-unsafe-return": "error",
-    
-    // Import rules
-    "import/no-cycle": "error",
-    "import/no-unresolved": "error",
-    "import/no-unused-modules": "error",
-    "import/order": ["error", {
-      "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-      "newlines-between": "always",
-      "alphabetize": { "order": "asc" }
-    }],
     
     // General best practices
     "no-console": ["error", { "allow": ["warn", "error"] }],

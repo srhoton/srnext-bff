@@ -2,6 +2,7 @@ type Query {
   hello: HelloResponse!
   getUnit(id: ID!): Unit
   listUnits(cursor: String, limit: Int): UnitsConnection!
+  getUnitWithWorkOrders(cursor: String, limit: Int): UnitsWithWorkOrdersConnection!
   getAccount(id: ID!): Account
   listAccounts(cursor: String, limit: Int): AccountsConnection!
   getContact(accountId: ID!, email: String!): Contact
@@ -180,6 +181,85 @@ type AcesAttribute {
 
 type UnitsConnection {
   items: [Unit!]!
+  cursor: String
+  hasMore: Boolean
+}
+
+type UnitWithWorkOrders {
+  id: ID!
+  accountId: String!
+  locationId: String!
+  unitType: String
+  suggestedVin: String!
+  errorCode: String
+  possibleValues: String
+  additionalErrorText: String
+  errorText: String
+  vehicleDescriptor: String
+  destinationMarket: String
+  make: String
+  manufacturerName: String
+  model: String
+  modelYear: String
+  plantCity: String
+  series: String
+  trim: String
+  vehicleType: String
+  plantCountry: String
+  plantCompanyName: String
+  plantState: String
+  trim2: String
+  series2: String
+  note: String
+  basePrice: String
+  nonLandUse: String
+  bodyClass: String
+  doors: String
+  windows: String
+  wheelBaseType: String
+  trackWidthInches: String
+  grossVehicleWeightRatingFrom: String
+  bedLengthInches: String
+  curbWeightPounds: String
+  wheelBaseInchesFrom: String
+  wheelBaseInchesTo: String
+  grossCombinationWeightRatingFrom: String
+  grossCombinationWeightRatingTo: String
+  grossVehicleWeightRatingTo: String
+  bedType: String
+  cabType: String
+  trailerTypeConnection: String
+  trailerBodyType: String
+  trailerLengthFeet: String
+  otherTrailerInfo: String
+  numberOfWheels: String
+  wheelSizeFrontInches: String
+  wheelSizeRearInches: String
+  engineNumberOfCylinders: String
+  displacementCc: String
+  displacementCi: String
+  displacementL: String
+  fuelTypePrimary: String
+  engineBrakeHpFrom: String
+  engineBrakeHpTo: String
+  seatBeltType: String
+  otherRestraintSystemInfo: String
+  frontAirBagLocations: String
+  busType: String
+  busFloorConfigurationType: String
+  motorcycleChassisType: String
+  motorcycleSuspensionType: String
+  customMotorcycleType: String
+  createdAt: AWSTimestamp!
+  updatedAt: AWSTimestamp!
+  deletedAt: AWSTimestamp!
+  extendedAttributes: [ExtendedAttribute!]
+  acesAttributes: [AcesAttribute!]
+  workOrders: [WorkOrder!]!
+}
+
+type UnitsWithWorkOrdersConnection {
+  items: [UnitWithWorkOrders!]!
   cursor: String
   hasMore: Boolean
 }
